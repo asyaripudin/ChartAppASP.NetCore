@@ -1,0 +1,32 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# .NET build output
+bin/
+obj/
+
+# Visual Studio Code
+.vscode/
+
+# User-specific files
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# NuGet
+packages/
+
+# Publish output
+publish/
+
+# Other
+*.psd

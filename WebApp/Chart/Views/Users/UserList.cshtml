@@ -1,0 +1,199 @@
+﻿@{
+    ViewData["Title"] = "User List";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/datatables.min.js"></script>
+    <script src="~/js/user.js"></script>
+    <link href="~/css/datatables.min.css" rel="stylesheet" />
+    <link href="~/css/mdb.min.css" rel="stylesheet" />
+    <script src="~/sweetalert/dist/sweetalert-dev.js"></script>
+    <script src="~/sweetalert/dist/sweetalert.min.js"></script>
+    <link href="~/sweetalert/dist/sweetalert.css" rel="stylesheet" />
+    <script>
+        window.onload = function () {
+            getUser();
+        }
+        $(function ($) {
+            $(".datepicker").datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+
+        $(function ($) {
+
+            $(".txtTanggal").datepicker({
+                onSelect: function (dateText) {
+                    $(this).change();
+                }
+            }).on("change", function () {
+                var tanggal = $(".txtTanggal").val();
+
+                display(tanggal);
+            });
+
+            function display(msg) {
+                $("#ViewTable").on('click', function () {
+
+                    $.noConflict();
+
+                    $("#tbl_temp").css({ display: 'block' });
+                    $("#ViewTable").prop('disabled', true);
+
+                    $("#chart_temp").css({ display: 'none' });
+                })
+
+                $("#ViewChart").on('click', function () {
+
+                    $("#chart_temp").css({ display: 'block' });
+                    $("#ViewChart").prop('disabled', true);
+                    $("#tbl_temp").css({ display: 'none' });
+                })
+            }
+        });
+    </script>
+</head>
+<body id="body">
+    <div class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div style="position:relative; top:-20px;">
+                        <button type="button" id="AddUser" onchange="getUserID();" onclick="getUserID();"
+                                class="btn btn-primary" style="margin:17px 0; color:#ffffff;
+                                padding: 2px 4px;" data-bs-toggle="modal" data-bs-target="#myModal">
+                            <i class="fa fa-plus" style="margin:0 10px;"></i><span style="margin:20px 12px;
+                                font-size:14px; font-weight:bold;color:#ffffff;">
+                                Add User
+                            </span>
+                        </button>
+                    </div>
+                    <div>
+                        <h4 style="text-align:center; text-decoration: underline;">User List </h4>
+                        <table id="tableUser" class="table table-bordered table-striped table-hover display"
+                               width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center; font-size:14px;" width="20">
+                                        NO
+                                    </th>
+                                  @*   <th style="text-align:center; font-size:14px;" width="20">
+                                        USER ID
+                                    </th> *@
+                                    <th style="text-align:center; font-size:14px;" width="20">
+                                        USER NAME
+                                    </th>
+                                    <th style="text-align:center; font-size:14px;" width="20">
+                                        PASSWORD
+                                    </th>
+                                    <th style="text-align:center; font-size:14px;" width="180">
+                                        USER TYPE
+                                    </th>
+                                    <th style="text-align:center; font-size:14px;" width="180">
+                                        STATUS
+                                    </th>
+                                    <th style="text-align:center; font-size:14px;" width="35" class="noExl">
+                                        ACTION
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal fade" id="myModal" onload="" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>Add New User</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post">
+                                        <div class="form-group">
+                                            <label for="UserId" style="font-size:14px; font-weight:bold;">USER ID</label>
+                                            <input type="text" class="form-control" id="txtUserID" readonly="readonly" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="UserName" style="font-size:14px; font-weight:bold;">USER NAME</label>
+                                            <input type="text" class="form-control" id="txtUserName" placeholder="" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Password" style="font-size:14px; font-weight:bold;">Password</label>
+                                            <input type="text" class="form-control" id="txtPassword" placeholder="" />
+                                        </div>
+                                        <div class="form-group" name="" onclick="getRadio();">
+                                            <label for="UserType" style="font-size:14px; font-weight:bold;">USER TYPE</label><br />
+                                            <input class="form-check-input" type="radio" name="usertype" id="rdoAdmin" value="Admin">Admin
+                                            <input class="form-check-input" type="radio" name="usertype" id="rdoStaff" value="Staff">Staff
+                                            <input type="hidden" id="hRadioBtn" />
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add()">Save</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="location.reload();">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="UpdateModal" onload="getRadioUpdate(), getRadioStatusUpdate()" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>Update User</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post">
+                                        <div class="form-group">
+                                            <label for="UserIdUpdate" style="font-size:14px; font-weight:bold;">USER ID</label>
+                                            <input type="text" class="form-control" id="txtUserIDUpdate" readonly="readonly" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="UserNameUpdate" style="font-size:14px; font-weight:bold;">USER NAME</label>
+                                            <input type="text" class="form-control" id="txtUserNameUpdate" placeholder="" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="PasswordUpdate" style="font-size:14px; font-weight:bold;">Password</label>
+                                            <input type="text" class="form-control" id="txtPasswordUpdate" placeholder="" />
+                                        </div>
+                                        <div class="form-group" name="" onclick="getRadioUpdate();">
+                                            <label for="UserTypeUpdate" style="font-size:14px; font-weight:bold;">USER TYPE</label><br />
+                                            <input class="form-check-input" type="radio" name="usertype" id="rdoAdmin" value="Admin">Admin
+                                            <input class="form-check-input" type="radio" name="usertype" id="rdoStaff" value="Staff">Staff
+                                            <input type="hidden" id="hRadioBtnUpdate" />
+                                        </div>
+                                        <div class="form-group" name="" onclick="getRadioStatusUpdate();">
+                                            <label for="StatusUpdate" style="font-size:14px; font-weight:bold;">STATUS</label><br />
+                                            <input class="form-check-input" type="radio" name="status" id="rdoActive" value="True">Active
+                                            <input class="form-check-input" type="radio" name="status" id="rdoNonActive" value="False">Non Active
+                                            <input type="hidden" id="hRadioBtnStatusUpdate" />
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="btnUpdate" onclick="return Update()">Update</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="location.reload();">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
