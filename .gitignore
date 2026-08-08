@@ -30,3 +30,5 @@ publish/
 
 # Other
 *.psd
+wwwroot/upload/*.xlsx
+wwwroot/upload/*.xls
